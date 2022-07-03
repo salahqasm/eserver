@@ -4,7 +4,16 @@ const {Sequelize,DataTypes}=require("sequelize");
 const Friends=require("./friends.model.js");
 const psql=process.env.DATABASE_URL
 
-const sequelize=new Sequelize(psql,{});
+let sequelizeOptions={
+    dialectOptions:{
+        ssl:{
+            require:true,
+            rejectUnauthorized:false
+        }
+    }
+}
+
+const sequelize=new Sequelize(psql,sequelizeOptions);
 
 module.exports={
     db:sequelize,
