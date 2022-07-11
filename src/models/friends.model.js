@@ -2,12 +2,13 @@
 
 
 const Friends=(sequelize,DataTypes)=>sequelize.define('friends',{
-    name:{
+    username:{
         type:DataTypes.STRING,
+        primaryKey: true,
         allowNull:false
     },
-    number:{
-        type:DataTypes.INTEGER,
+    password:{
+        type:DataTypes.STRING,
         allowNull:false
     }
 });

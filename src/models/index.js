@@ -4,14 +4,14 @@ const {Sequelize,DataTypes}=require("sequelize");
 const Friends=require("./friends.model.js");
 const psql=process.env.DATABASE_URL
 
-let sequelizeOptions={
-    dialectOptions:{
-        ssl:{
-            require:true,
-            rejectUnauthorized:false
-        }
+let sequelizeOptions = process.env.NODE_ENV === 'production' ? {
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      }
     }
-}
+  } : {};
 
 const sequelize=new Sequelize(psql,sequelizeOptions);
 
