@@ -2,10 +2,13 @@
 
 const express=require("express");
 const {user}=require("../models/index.js");
-
+const bearerauth=require("../middlewares/bearer.js")
+const aclMiddleware=require('../middlewares/acl.js');
 const router=express.Router();
+router.use(bearerauth);
 
-router.get('/user',getAllUsers);
+
+router.get('/user',aclMiddleware('delete'),getAllUsers);
 
 router.get('/user/:id',getUserByNumber);
 
@@ -39,8 +42,9 @@ async function getUserByNumber(req,res){
 }
 
 async function getAllUsers(req,res){
-    let userD=await user.findAll();
-    res.status(200).json(userD);
+        let userD=await user.findAll();
+        res.status(200).json(userD);
+        
 }
 
 async function addUser(req,res){

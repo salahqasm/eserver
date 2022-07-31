@@ -2,9 +2,9 @@
 require('dotenv').config();
 const bcrypt = require("bcrypt");
 const base64 = require("base-64");
-const jwt=require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
-const secret=process.env.SECRET;
+const secret = process.env.SECRET;
 
 const user = (sequelize, DataTypes) => {
     const user = sequelize.define('users', {
@@ -17,8 +17,23 @@ const user = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        token:{
-            type:DataTypes.VIRTUAL
+        role: {
+            type: DataTypes.ENUM('user', 'admin', 'superuser'),
+            defaultValue: 'user'
+        },
+        token: {
+            type: DataTypes.VIRTUAL
+        },
+        actions:{
+            type:DataTypes.VIRTUAL,
+            get(){
+                const acl={
+                    user:['read','write'],
+                    admin:['read','write','update','delete'],
+                    superuser:['read','write','delete']
+                }
+                return acl[this.role];
+            }
         }
     })
     user.auth = async function (username, hashedPassword) {
@@ -27,13 +42,13 @@ const user = (sequelize, DataTypes) => {
             if (userD) {
                 let valid = await bcrypt.compare(hashedPassword, userD.password);
                 if (valid) {
-                    let newToken=jwt.sign({username:userD.username},secret)
-                    userD.token=newToken;
+                    let newToken = jwt.sign({ username: userD.username }, secret)
+                    userD.token = newToken;
                     return userD;
                 }
                 else {
                     return "wrong password!";
-                    
+
                 }
             } else {
                 return "invalid user!";

@@ -10,14 +10,15 @@ router.post('/signin',signIn);
 
 
 async function signUp(req,res){
-    let {username,password}=req.body;
+    let {username,password,role}=req.body;
     let hashed=await bcrypt.hash(password,5);
     let userD=await user.findOne({where:{username:username}});
     if(!userD){
         try{
             await user.create({
                 username:username,
-                password:hashed
+                password:hashed,
+                role:role
             })
         }catch(err){
             console.log(err);
@@ -28,7 +29,7 @@ async function signUp(req,res){
     }
 }
 
-
+//basic #username:password
 async function signIn(req,res){
     if(req.headers['authorization']){
         let base=req.headers.authorization.split(' ');
